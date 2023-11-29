@@ -146,7 +146,7 @@ async function run() {
         core.setOutput("response", JSON.stringify(result));
     } catch (error) {
         if (error instanceof Error) {
-            if (error.message.endsWith("statusCode = 408")) {
+            if (error.message.endsWith("statusCode = 408") || error.message.endsWith("statusCode = 504")) {
                 core.setOutput("response", JSON.stringify({ ok: true, file: {} }));
             } else {
                 core.setFailed(error.message);
