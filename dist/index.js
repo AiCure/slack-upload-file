@@ -3502,7 +3502,9 @@ class WebClient extends methods_1.Methods {
                     }
                 }
                 // Slack's Web API doesn't use meaningful status codes besides 429 and 200
-                if (response.status !== 200) {
+                // An HTTP protocol error occurred: statusCode = 504,
+                // but it does not impact the file to be uploaded.
+                if (response.status !== 200 && response.status !== 504) {
                     throw (0, errors_1.httpErrorFromResponse)(response);
                 }
                 return response;
@@ -3613,7 +3615,13 @@ class WebClient extends methods_1.Methods {
             }
             catch (_) {
                 // failed to parse the string value as JSON data
-                data = { ok: false, error: data };
+                // An HTTP protocol error occurred: statusCode = 504,
+                // but it does not impact the file to be uploaded.
+                if (response.status === 504) {
+                    data = { ok: true, error: data };
+                } else {
+                    data = { ok: false, error: data };
+                }
             }
         }
         if (data.response_metadata === undefined) {
